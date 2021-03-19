@@ -1,8 +1,8 @@
 # final_project
 
 A new Flutter application.
+![2](https://user-images.githubusercontent.com/57682074/111839321-4c1fed00-8903-11eb-8a62-75edf991230c.jpeg)
 
-## Getting Started
 
 This project is a starting point for a Flutter application.
 
