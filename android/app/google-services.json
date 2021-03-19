@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "358044708901",
+    "project_id": "printer-market-4aa5b",
+    "storage_bucket": "printer-market-4aa5b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:358044708901:android:8e233bb177f413084a0fcc",
+        "android_client_info": {
+          "package_name": "com.example.final_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "358044708901-bsqcdn2be06bh65mcfda9h4l35kdlfop.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5WXlxx-axuuUGtDJek6eH8-DaA4WVkMA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "358044708901-bsqcdn2be06bh65mcfda9h4l35kdlfop.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
