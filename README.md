@@ -2,7 +2,6 @@
 
 A new Flutter application for Printing services.
 -![2](https://user-images.githubusercontent.com/57682074/111839321-4c1fed00-8903-11eb-8a62-75edf991230c.jpeg).
--![2](https://user-images.githubusercontent.com/57682074/111839459-7bcef500-8903-11eb-8e98-825dfa61d2a1.jpeg).
 -![3](https://user-images.githubusercontent.com/57682074/111839688-d8321480-8903-11eb-9ab1-7885ddad24c4.jpeg).
 
 
