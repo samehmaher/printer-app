@@ -13,8 +13,8 @@ class HomeCard extends StatelessWidget {
         onTap: onPressed,
         child: Container(
           margin: EdgeInsets.all(10),
-          padding: EdgeInsets.all(10),
-          height: 200,
+          padding: EdgeInsets.all(20),
+          height: 215,
           width: 160,
           decoration: BoxDecoration(
               gradient: LinearGradient(

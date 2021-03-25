@@ -7,11 +7,10 @@ import 'package:final_project/widget/social_icon.dart';
 import 'package:final_project/screens/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:form_field_validator/form_field_validator.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
-
+import 'package:form_field_validator/form_field_validator.dart';
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -25,15 +24,12 @@ class _LoginScreenState extends State<LoginScreen> {
   var _passwordController = TextEditingController();
   var _formKey = GlobalKey<FormState>();
   var emailValidator = MultiValidator([
-    RequiredValidator(errorText: 'Email is Required'),
-    EmailValidator(errorText: 'Email not Valid'),
+    RequiredValidator(errorText: 'email is required'),
   ]);
   var passwordValidator = MultiValidator([
     RequiredValidator(errorText: 'password is required'),
-    MinLengthValidator(8, errorText: 'password at least 8 chars'),
-    PatternValidator(r'(?=.?[#?!@$%^&-])',
-        errorText: 'password must have special chars')
   ]);
+  bool show = true;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +43,8 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               children: [
                 Header(
-                  text: 'Login',
+                  text: 'SIGN IN',
+
                 ),
                 Form(
                     key: _formKey,
@@ -60,9 +57,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               hint: 'Email',
                               icon: Icons.email,
                               obscureText: false,
+                              validator: emailValidator,
                               keyboardType: TextInputType.emailAddress,
                             controller: _emailController,
-                            validator: emailValidator,
                               onChanged: (value) {
                                 email = value;
                                 //Do something with the user input.
@@ -71,10 +68,16 @@ class _LoginScreenState extends State<LoginScreen> {
                           customTextField(
                               hint: 'Password',
                               icon: Icons.vpn_key,
-                              obscureText: true,
+                              obscureText: show,
+                              validator: passwordValidator,
+                              iconV: show?Icons.visibility:Icons.visibility_off ,
+                              iconTap: (){
+                                setState(() {
+                                  show = !show;
+                                });
+                              },
                               keyboardType: TextInputType.visiblePassword,
                             controller:_passwordController ,
-                            validator:passwordValidator ,
                             onChanged: (value) {
                               password = value;
                               //Do something with the user input.
@@ -87,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           ButtonReuse(
-                            text: 'LOGIN',
+                            text: 'SIGN IN',
                             width: double.infinity,
                             onTap: () async {
                               if (_formKey.currentState.validate()) {
@@ -110,14 +113,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                     setState(() {
                                       spinner = true;
                                     });
-                                    _emailController.clear();
-                                    _passwordController.clear();
+
                                     await _auth.signInWithEmailAndPassword(
                                         email: email, password: password);
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) => HomePage()));
+                                    _emailController.clear();
+                                    _passwordController.clear();
                                     setState(() {
                                       spinner = false;
                                     });

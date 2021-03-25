@@ -34,6 +34,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     PatternValidator(r'(?=.?[#?!@$%^&-])',
         errorText: 'password must have special chars')
   ]);
+  bool show = true;
 
   @override
   Widget build(BuildContext context) {
@@ -82,8 +83,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           customTextField(
                             hint: 'Password',
                             icon: Icons.vpn_key,
-                            obscureText: true,
+                            obscureText: show,
                             keyboardType: TextInputType.visiblePassword,
+                            iconV: show?Icons.visibility:Icons.visibility_off ,
+                            iconTap: (){
+                              setState(() {
+                                show = !show;
+                              });
+                            },
                             controller: _passwordController,
                             validator: passwordValidator,
                             onChanged: (value) {
@@ -102,7 +109,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         ConnectivityResult.mobile &&
                                     connectivityResult !=
                                         ConnectivityResult.wifi) {
-                                  // ignore: deprecated_member_use
                                   Scaffold.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text('No Internet Connection'),
@@ -110,40 +116,35 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       duration: Duration(seconds: 3),
                                     ),
                                   );
-                                }
-                              } else {
-                                try {
-                                  setState(() {
-                                    spinner = true;
-                                  });
-                                  await _auth.createUserWithEmailAndPassword(
-                                      email: email, password: password);
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => LoginScreen()),
-                                  );
-                                  setState(() {
-                                    spinner = false;
-                                  });
-                                } catch (e) {
-                                  setState(() {
-                                    spinner = false;
-                                  });
-                                  if (e is FirebaseAuthException) {
-                                    if (e.code == 'email-already-in-use') {
-                                      Scaffold.of(context)
-                                          // ignore: deprecated_member_use
-                                          .showSnackBar(SnackBar(
-                                        content: Text('Email Already in Use'),
-                                        backgroundColor: Colors.red,
-                                        duration: Duration(seconds: 3),
-                                      ));
+                                } else {
+                                  try {
+                                    setState(() {
+                                      spinner = true;
+                                    });
+                                    await _auth.createUserWithEmailAndPassword(
+                                        email: email, password: password);
+                                    Navigator.pop(context);
+
+                                    setState(() {
+                                      spinner = false;
+                                    });
+                                  } catch (e) {
+                                    setState(() {
+                                      spinner = false;
+                                    });
+                                    if (e is FirebaseAuthException) {
+                                      if (e.code == 'email-already-in-use') {
+                                        Scaffold.of(context)
+                                            .showSnackBar(SnackBar(
+                                          content: Text('Email Already in Use'),
+                                          backgroundColor: Colors.red,
+                                          duration: Duration(seconds: 3),
+                                        ));
+                                      }
                                     }
                                   }
                                 }
                               }
-                              //Implement login functionality.
                             },
                           ),
                           Row(
@@ -173,7 +174,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                             builder: (context) =>
                                                 LoginScreen()));
                                   },
-                                  child: Text('Log in',
+                                  child: Text('Sign In',
                                       style: TextStyle(color: deepBlue))),
                             ],
                           )

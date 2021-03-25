@@ -19,9 +19,9 @@ class Header extends StatelessWidget {
             Positioned(
                 bottom: 20,
                 right: 20,
-                child: Text(text,style: TextStyle(
+                child: Text(text.toUpperCase() ,style: TextStyle(
                     color: Colors.white,
-                    fontSize: 20
+                    fontSize: 30, fontWeight: FontWeight.w600 , letterSpacing: 4,
                 ),)),
             Center(
               child: Image.asset(
