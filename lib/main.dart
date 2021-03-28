@@ -1,3 +1,6 @@
+import 'package:final_project/screens/clothes_screen.dart';
+import 'package:final_project/screens/files_screen.dart';
+import 'package:final_project/screens/gifts_screen.dart';
 import 'package:final_project/screens/login_screen.dart';
 import 'package:final_project/screens/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
