@@ -17,6 +17,8 @@ class ColumDropDown extends StatelessWidget {
           style: TextStyle(color: deepBlue, fontSize: 16),
         ),
         DropdownButton(
+          autofocus: true,
+          dropdownColor: Colors.white,
           focusColor: Colors.white,
           isExpanded: true,
           hint: Text(

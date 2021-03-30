@@ -2,11 +2,12 @@ import 'package:final_project/component/color.dart';
 import 'package:flutter/material.dart';
 class ColumTextField extends StatelessWidget {
   const ColumTextField({
-    this.headText,this.hint,this.onChange
+    this.headText,this.hint,this.onChange,this.keyboard
   }) ;
   final String headText;
   final String hint;
   final Function onChange;
+  final TextInputType keyboard;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -17,7 +18,7 @@ class ColumTextField extends StatelessWidget {
           style: TextStyle(color: deepBlue, fontSize: 16),
         ),
         TextField(
-          keyboardType: TextInputType.number,
+          keyboardType: keyboard,
           style: TextStyle(fontSize: 16),
           decoration: InputDecoration(
             contentPadding: EdgeInsets.all(5),

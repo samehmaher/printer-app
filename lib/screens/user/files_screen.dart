@@ -71,6 +71,7 @@ class _FilesScreenState extends State<FilesScreen> {
                         height: 20,
                       ),
                       ColumTextField(
+                        keyboard: TextInputType.number,
                         headText: 'Number Of Copies :',
                         hint: '  Enter Number Of Copy',
                         onChange: (val) {
@@ -129,6 +130,7 @@ class _FilesScreenState extends State<FilesScreen> {
                         height: 20,
                       ),
                       ColumTextField(
+                        keyboard: TextInputType.text,
                         headText: 'Your Address :',
                         hint: '  Enter Your Address',
                         onChange: (val) {
