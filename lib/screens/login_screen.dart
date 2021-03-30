@@ -11,6 +11,8 @@ import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -34,9 +36,9 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Builder(
-        builder:(context) => ModalProgressHUD(
-          inAsyncCall: spinner,
+        body: Builder(
+      builder: (context) => ModalProgressHUD(
+        inAsyncCall: spinner,
         child: SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.only(bottom: 30),
@@ -44,7 +46,6 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 Header(
                   text: 'SIGN IN',
-
                 ),
                 Form(
                     key: _formKey,
@@ -54,30 +55,31 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Column(
                         children: [
                           customTextField(
-                              hint: 'Email',
-                              icon: Icons.email,
-                              obscureText: false,
-                              validator: emailValidator,
-                              keyboardType: TextInputType.emailAddress,
+                            hint: 'Email',
+                            icon: Icons.email,
+                            obscureText: false,
+                            validator: emailValidator,
+                            keyboardType: TextInputType.emailAddress,
                             controller: _emailController,
-                              onChanged: (value) {
-                                email = value;
-                                //Do something with the user input.
-                              },
+                            onChanged: (value) {
+                              email = value;
+                              //Do something with the user input.
+                            },
                           ),
                           customTextField(
-                              hint: 'Password',
-                              icon: Icons.vpn_key,
-                              obscureText: show,
-                              validator: passwordValidator,
-                              iconV: show?Icons.visibility:Icons.visibility_off ,
-                              iconTap: (){
-                                setState(() {
-                                  show = !show;
-                                });
-                              },
-                              keyboardType: TextInputType.visiblePassword,
-                            controller:_passwordController ,
+                            hint: 'Password',
+                            icon: Icons.vpn_key,
+                            obscureText: show,
+                            validator: passwordValidator,
+                            iconV:
+                                show ? Icons.visibility : Icons.visibility_off,
+                            iconTap: () {
+                              setState(() {
+                                show = !show;
+                              });
+                            },
+                            keyboardType: TextInputType.visiblePassword,
+                            controller: _passwordController,
                             onChanged: (value) {
                               password = value;
                               //Do something with the user input.
@@ -94,10 +96,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             width: double.infinity,
                             onTap: () async {
                               if (_formKey.currentState.validate()) {
-                                var connectivityResult = await (Connectivity()
-                                    .checkConnectivity());
+                                var connectivityResult =
+                                    await (Connectivity().checkConnectivity());
                                 if (connectivityResult !=
-                                    ConnectivityResult.mobile &&
+                                        ConnectivityResult.mobile &&
                                     connectivityResult !=
                                         ConnectivityResult.wifi) {
                                   // ignore: deprecated_member_use
@@ -116,6 +118,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
                                     await _auth.signInWithEmailAndPassword(
                                         email: email, password: password);
+                                    SharedPreferences pref =
+                                        await SharedPreferences.getInstance();
+                                    pref.setString('email', email);
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(

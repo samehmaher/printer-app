@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'package:final_project/component/color.dart';
+import 'package:final_project/screens/home_page.dart';
 import 'package:final_project/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 class SplashScreen extends StatefulWidget {
+  SplashScreen({this.mail});
+  final String mail;
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -13,7 +16,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     Timer(const Duration(milliseconds: 5000), () {
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => LoginScreen()));
+          context, MaterialPageRoute(builder: (context) => (widget.mail==null)?LoginScreen():HomePage()));
     });
   }
 

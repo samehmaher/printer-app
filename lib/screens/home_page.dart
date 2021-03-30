@@ -5,10 +5,11 @@ import 'package:final_project/widget/drawer_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:final_project/widget/home_card.dart';
-import 'files_screen.dart';
-import 'shield_screen.dart';
-import 'gifts_screen.dart';
-import 'clothes_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'user/files_screen.dart';
+import 'user/shield_screen.dart';
+import 'user/gifts_screen.dart';
+import 'user/clothes_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class HomePage extends StatefulWidget {
@@ -62,8 +63,10 @@ class _HomePageState extends State<HomePage> {
                   ),
                   DrawerList(
                     text: 'Sign Out',
-                    onTap: () {
+                    onTap: () async{
                       _auth.signOut();
+                      SharedPreferences pref = await SharedPreferences.getInstance();
+                      pref.remove('email');
                       Navigator.push(
                           context,
                           MaterialPageRoute(
