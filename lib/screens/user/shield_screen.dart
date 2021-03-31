@@ -1,12 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
-
 import 'package:final_project/component/color.dart';
-
 import '../../widget/button_reuse_2.dart';
 import '../../widget/colum_DropdownButton.dart';
 import '../../widget/colum_text_field.dart';
-
 
 class ShieldsScreen extends StatefulWidget {
   @override
@@ -14,6 +13,8 @@ class ShieldsScreen extends StatefulWidget {
 }
 
 class _FilesScreenState extends State<ShieldsScreen> {
+  final _fireStore = FirebaseFirestore.instance;
+  final _auth = FirebaseAuth.instance;
   bool spinner=false;
   String script,address,models;
   List modelList = ['model 1', 'model 2' , 'model 3'];
@@ -35,8 +36,8 @@ class _FilesScreenState extends State<ShieldsScreen> {
             title: Text(
               'Shield',
               style: TextStyle(
-                fontSize: 30,
-                color: Colors.white.withOpacity(0.7),
+                fontSize: 20,
+                color: Colors.white.withOpacity(0.9),
               ),
             ),
           ),
@@ -92,7 +93,35 @@ class _FilesScreenState extends State<ShieldsScreen> {
                         ButtonReuse2(
                           text: 'SEND',
                           width: double.infinity,
-                          onTap: (){},
+                          onTap: (){
+                            if(models!=null){
+                              _fireStore.collection('shields').add({
+                                "address":address,
+                                'script':script,
+                                'model':models,
+                                'sender':_auth.currentUser.email
+                              });
+                              Scaffold.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Your order has been send ! ',style: TextStyle(
+                                      color: Colors.white
+                                  ),),
+                                  backgroundColor: Colors.green,
+                                  duration: Duration(seconds: 3),
+                                ),
+                              );
+                            }else{
+                              Scaffold.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('No Model selected',style: TextStyle(
+                                      color: Colors.white
+                                  ),),
+                                  backgroundColor: Colors.red,
+                                  duration: Duration(seconds: 3),
+                                ),
+                              );
+                            }
+                          },
                         ),
 
                       ],

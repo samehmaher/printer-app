@@ -1,11 +1,18 @@
+import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:final_project/component/color.dart';
 import 'package:final_project/widget/button_reuse_2.dart';
 import 'package:final_project/widget/colum_DropdownButton.dart';
 import 'package:final_project/widget/colum_text_field.dart';
 import 'package:final_project/widget/deleting_file.dart';
 import 'package:final_project/widget/uplode_line.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:permission_handler/permission_handler.dart';
+
 
 class FilesScreen extends StatefulWidget {
   @override
@@ -13,10 +20,58 @@ class FilesScreen extends StatefulWidget {
 }
 
 class _FilesScreenState extends State<FilesScreen> {
+  final _fireStore = FirebaseFirestore.instance;
+  final _auth = FirebaseAuth.instance;
   bool spinner = false;
+  String fileUrl;
   String printSize, umberOfCopies,printType,address;
   List sizeList = ['A4', 'A3'];
-  List typeList = ['Black & White','Colors'];
+  List typeList = ['Black & White','Colorful'];
+
+
+  Future uploadFile(BuildContext context) async {
+    final _storage = FirebaseStorage.instance;
+    final _picker =FilePicker.platform;
+    var image;
+    await Permission.storage.request();
+    var permissionStatus = await Permission.storage.status;
+    if (permissionStatus.isGranted) {
+      image = await _picker.pickFiles(type: FileType.any);
+      var file = File(image.path);
+      if (image != null) {
+        setState(() {
+          spinner = true;
+        });
+        var snapshots =
+        await _storage.ref().child('file').putFile(file);
+
+        var downloadUrl = await snapshots.ref.getDownloadURL();
+        setState(() {
+          fileUrl = downloadUrl;
+        });
+        setState(() {
+          spinner = false;
+        });
+      } else {
+        Scaffold.of(context).showSnackBar(
+          SnackBar(
+            content: Text('please upload File'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    } else {
+      Scaffold.of(context).showSnackBar(
+        SnackBar(
+          content: Text('No Permission accepting'),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -36,8 +91,8 @@ class _FilesScreenState extends State<FilesScreen> {
           title: Text(
             'Files',
             style: TextStyle(
-              fontSize: 30,
-              color: Colors.white.withOpacity(0.7),
+              fontSize: 20,
+              color: Colors.white.withOpacity(0.9),
             ),
           ),
         ),
@@ -50,15 +105,20 @@ class _FilesScreenState extends State<FilesScreen> {
                   padding: EdgeInsets.all(15),
                   child: Column(
                     children: [
-                      Image.asset(
+                      (fileUrl==null)?Image.asset(
                         'images/fileicon.png',
+                        height: 100,
+                        width: 100,
+                        fit: BoxFit.scaleDown,
+                      ):Image.network(
+                        fileUrl,
                         height: 100,
                         width: 100,
                         fit: BoxFit.scaleDown,
                       ),
                       UploadLine(
                         text: 'Add File',
-                        onTap: () {},
+                        onTap: () =>uploadFile(context),
                       ),
                       SizedBox(
                         height: 20,
@@ -143,7 +203,38 @@ class _FilesScreenState extends State<FilesScreen> {
                       ButtonReuse2(
                         text: 'SEND',
                         width: double.infinity,
-                        onTap: (){},
+                        onTap: (){
+                          if(fileUrl!=null){
+                            _fireStore.collection('file').add({
+                              "numOfCopies": umberOfCopies,
+                              "address":address,
+                              'printSize':printSize,
+                              'printType':printType,
+                              'url':fileUrl,
+                              'sender':_auth.currentUser.email
+                            });
+                            Scaffold.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Your order has been send ! ',style: TextStyle(
+                                    color: Colors.white
+                                ),),
+                                backgroundColor: Colors.green,
+                                duration: Duration(seconds: 3),
+                              ),
+                            );
+                          }else{
+                            Scaffold.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('No file selected',style: TextStyle(
+                                    color: Colors.white
+                                ),),
+                                backgroundColor: Colors.red,
+                                duration: Duration(seconds: 3),
+                              ),
+                            );
+                          }
+
+                        },
                       ),
                     ],
                   ),

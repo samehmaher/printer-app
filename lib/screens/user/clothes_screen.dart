@@ -1,18 +1,71 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:final_project/component/color.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:final_project/widget/button_reuse_2.dart';
 import 'package:final_project/widget/colum_text_field.dart';
 import 'package:final_project/widget/deleting_file.dart';
 import 'package:final_project/widget/uplode_line.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:permission_handler/permission_handler.dart';
 class ClothesScreen extends StatefulWidget {
   @override
   _FilesScreenState createState() => _FilesScreenState();
 }
 
 class _FilesScreenState extends State<ClothesScreen> {
+  final _fireStore = FirebaseFirestore.instance;
+  final _auth = FirebaseAuth.instance;
   bool spinner = false;
   String umberOfCopies,address;
+  String imageUrl;
+
+  Future uploadPic(BuildContext context) async {
+    final _storage = FirebaseStorage.instance;
+    final _picker = ImagePicker();
+    PickedFile image;
+    await Permission.photos.request();
+    var permissionStatus = await Permission.photos.status;
+    if (permissionStatus.isGranted) {
+      image = await _picker.getImage(source: ImageSource.gallery);
+      var file = File(image.path);
+      if (image != null) {
+        setState(() {
+          spinner = true;
+        });
+        var snapshots =
+        await _storage.ref().child('clothesImage').putFile(file);
+
+        var downloadUrl = await snapshots.ref.getDownloadURL();
+        setState(() {
+          imageUrl = downloadUrl;
+        });
+        setState(() {
+          spinner = false;
+        });
+      } else {
+        Scaffold.of(context).showSnackBar(
+          SnackBar(
+            content: Text('please upload photo'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    } else {
+      Scaffold.of(context).showSnackBar(
+        SnackBar(
+          content: Text('No Permission accepting'),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ModalProgressHUD(
@@ -45,21 +98,28 @@ class _FilesScreenState extends State<ClothesScreen> {
                     padding: EdgeInsets.all(15),
                     child: Column(
                       children: [
-                        Image.asset(
+                        (imageUrl == null)
+                            ? Image.asset(
                           'images/addimage.png',
+                          height: 100,
+                          width: 100,
+                          fit: BoxFit.scaleDown,
+                        )
+                            : Image.network(
+                          imageUrl,
                           height: 100,
                           width: 100,
                           fit: BoxFit.scaleDown,
                         ),
                         UploadLine(
                           text: 'Add Image',
-                          onTap: (){},
+                          onTap: ()=>uploadPic(context),
                         ),
                         SizedBox(
                           height: 20,
                         ),
                         DeletingFile(
-                          text: 'File Name',
+                          text: 'Image Name',
                           delete: () {},
                         ),
                         SizedBox(
@@ -90,7 +150,35 @@ class _FilesScreenState extends State<ClothesScreen> {
                         ButtonReuse2(
                           text: 'SEND',
                           width: double.infinity,
-                          onTap: (){},
+                          onTap: (){
+                            if(imageUrl!=null){
+                              _fireStore.collection('clothes').add({
+                                "numOfCopies": umberOfCopies,
+                                "address":address,
+                                'url':imageUrl,
+                                'sender':_auth.currentUser.email
+                              });
+                              Scaffold.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Your order has been send ! ',style: TextStyle(
+                                      color: Colors.white
+                                  ),),
+                                  backgroundColor: Colors.green,
+                                  duration: Duration(seconds: 3),
+                                ),
+                              );
+                            }else{
+                              Scaffold.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('No image selected',style: TextStyle(
+                                      color: Colors.white
+                                  ),),
+                                  backgroundColor: Colors.red,
+                                  duration: Duration(seconds: 3),
+                                ),
+                              );
+                            }
+                          },
                         ),
                       ],
                     ),
