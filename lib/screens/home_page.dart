@@ -1,4 +1,8 @@
 import 'package:final_project/component/color.dart';
+import 'package:final_project/screens/admin/clothes_admin.dart';
+import 'package:final_project/screens/admin/file_admin.dart';
+import 'package:final_project/screens/admin/gifts_admin.dart';
+import 'package:final_project/screens/admin/shield_admin.dart';
 import 'package:final_project/screens/login_screen.dart';
 import 'package:final_project/widget/button_reuse.dart';
 import 'package:final_project/widget/drawer_list.dart';
@@ -20,7 +24,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   var scaffoldKey = GlobalKey<ScaffoldState>();
   var _auth=FirebaseAuth.instance;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,7 +89,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ],
               ),
-
             ),
           ),
         ),
@@ -123,7 +125,7 @@ class _HomePageState extends State<HomePage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => FilesScreen()));
+                              builder: (context) => (_auth.currentUser.email!='admin@gmail.com')?FilesScreen():FileAdmin()));
                     },
                     image: 'file.json',
                     text: 'Files',
@@ -133,7 +135,7 @@ class _HomePageState extends State<HomePage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => ClothesScreen()));
+                              builder: (context) => (_auth.currentUser.email!='admin@gmail.com')?ClothesScreen():ClothesAdmin()));
                     },
                     image: 'clothes.json',
                     text: 'Clothes',
@@ -147,7 +149,7 @@ class _HomePageState extends State<HomePage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => ShieldsScreen()));
+                              builder: (context) => (_auth.currentUser.email!='admin@gmail.com')?ShieldsScreen():ShieldAdmin()));
                     },
                     image: 'cup.json',
                     text: 'Shields',
@@ -157,7 +159,7 @@ class _HomePageState extends State<HomePage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => GiftsScreen()));
+                              builder: (context) => (_auth.currentUser.email!='admin@gmail.com')?GiftsScreen():GiftsAdmin()));
                     },
                     image: 'gift.json',
                     text: 'Gifts',

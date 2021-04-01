@@ -93,13 +93,19 @@ class _FilesScreenState extends State<ShieldsScreen> {
                         ButtonReuse2(
                           text: 'SEND',
                           width: double.infinity,
-                          onTap: (){
+                          onTap: ()async{
+                            setState(() {
+                              spinner = true;
+                            });
                             if(models!=null){
-                              _fireStore.collection('shields').add({
+                              await _fireStore.collection('shields').add({
                                 "address":address,
                                 'script':script,
                                 'model':models,
                                 'sender':_auth.currentUser.email
+                              });
+                              setState(() {
+                                spinner = false;
                               });
                               Scaffold.of(context).showSnackBar(
                                 SnackBar(
@@ -111,6 +117,9 @@ class _FilesScreenState extends State<ShieldsScreen> {
                                 ),
                               );
                             }else{
+                              setState(() {
+                                spinner = false;
+                              });
                               Scaffold.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text('No Model selected',style: TextStyle(
@@ -123,7 +132,6 @@ class _FilesScreenState extends State<ShieldsScreen> {
                             }
                           },
                         ),
-
                       ],
                     ),
                   ),
@@ -131,6 +139,7 @@ class _FilesScreenState extends State<ShieldsScreen> {
               ),
             ),
           ),
-        ));
+        ),
+    );
   }
 }

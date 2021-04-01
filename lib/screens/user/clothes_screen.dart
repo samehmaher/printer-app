@@ -150,14 +150,20 @@ class _FilesScreenState extends State<ClothesScreen> {
                         ButtonReuse2(
                           text: 'SEND',
                           width: double.infinity,
-                          onTap: (){
+                          onTap: ()async{
+                            setState(() {
+                              spinner = true;
+                            });
                             if(imageUrl!=null){
-                              _fireStore.collection('clothes').add({
+                             await _fireStore.collection('clothes').add({
                                 "numOfCopies": umberOfCopies,
                                 "address":address,
                                 'url':imageUrl,
                                 'sender':_auth.currentUser.email
                               });
+                             setState(() {
+                               spinner = false;
+                             });
                               Scaffold.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text('Your order has been send ! ',style: TextStyle(
@@ -168,6 +174,9 @@ class _FilesScreenState extends State<ClothesScreen> {
                                 ),
                               );
                             }else{
+                              setState(() {
+                                spinner = false;
+                              });
                               Scaffold.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text('No image selected',style: TextStyle(

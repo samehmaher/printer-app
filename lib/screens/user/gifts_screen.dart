@@ -37,8 +37,7 @@ class _FilesScreenState extends State<GiftsScreen> {
         setState(() {
           spinner = true;
         });
-        var snapshots =
-            await _storage.ref().child('giftImage').putFile(file);
+        var snapshots = await _storage.ref().child('giftImage').putFile(file);
 
         var downloadUrl = await snapshots.ref.getDownloadURL();
         setState(() {
@@ -151,29 +150,40 @@ class _FilesScreenState extends State<GiftsScreen> {
                         ButtonReuse2(
                           text: 'SEND',
                           width: double.infinity,
-                          onTap: () {
-                            if(imageUrl!=null){
-                              _fireStore.collection('gifts').add({
+                          onTap: () async{
+                            setState(() {
+                              spinner = true;
+                            });
+                            if (imageUrl != null) {
+                              await _fireStore.collection('gifts').add({
                                 "numOfCopies": umberOfCopies,
-                                "address":address,
-                                'url':imageUrl,
-                                'sender':_auth.currentUser.email
+                                "address": address,
+                                'url': imageUrl,
+                                'sender': _auth.currentUser.email
+                              });
+                              setState(() {
+                                spinner = false;
                               });
                               Scaffold.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text('Your order                                                               has been send ! ',style: TextStyle(
-                                    color: Colors.white
-                                  ),),
+                                  content: Text(
+                                    'Your order has been send ! ',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
                                   backgroundColor: Colors.green,
                                   duration: Duration(seconds: 3),
                                 ),
                               );
-                            }else{
+                            } else {
+                              setState(() {
+                                spinner = false;
+                              });
                               Scaffold.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text('No image selected',style: TextStyle(
-                                      color: Colors.white
-                                  ),),
+                                  content: Text(
+                                    'No image selected',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
                                   backgroundColor: Colors.red,
                                   duration: Duration(seconds: 3),
                                 ),

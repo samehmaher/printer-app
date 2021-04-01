@@ -203,15 +203,21 @@ class _FilesScreenState extends State<FilesScreen> {
                       ButtonReuse2(
                         text: 'SEND',
                         width: double.infinity,
-                        onTap: (){
+                        onTap: ()async{
+                          setState(() {
+                            spinner = true;
+                          });
                           if(fileUrl!=null){
-                            _fireStore.collection('file').add({
+                            await _fireStore.collection('file').add({
                               "numOfCopies": umberOfCopies,
                               "address":address,
                               'printSize':printSize,
                               'printType':printType,
                               'url':fileUrl,
                               'sender':_auth.currentUser.email
+                            });
+                            setState(() {
+                              spinner = false;
                             });
                             Scaffold.of(context).showSnackBar(
                               SnackBar(
@@ -223,6 +229,9 @@ class _FilesScreenState extends State<FilesScreen> {
                               ),
                             );
                           }else{
+                            setState(() {
+                              spinner = false;
+                            });
                             Scaffold.of(context).showSnackBar(
                               SnackBar(
                                 content: Text('No file selected',style: TextStyle(
