@@ -9,9 +9,9 @@ class ReuseCard extends StatelessWidget {
       this.numOfCopies,
       this.chat,
       this.download,
-      this.url});
+      this.url,this.fileName});
 
-  final String sender, address, numOfCopies, url;
+  final String sender, address, numOfCopies, url,fileName;
   final Function download, chat;
 
   @override

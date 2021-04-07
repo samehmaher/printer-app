@@ -58,17 +58,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       child: Column(
                         children: [
                           customTextField(
-                            hint: 'Full name',
-                            icon: Icons.person,
-                            obscureText: false,
-                            keyboardType: TextInputType.name,
-                            controller: _nameController,
-                            onChanged: (value) {
-                              name = value;
-                              //Do something with the user input.
-                            },
-                          ),
-                          customTextField(
                             hint: 'Email',
                             icon: Icons.email,
                             obscureText: false,

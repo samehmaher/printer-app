@@ -11,6 +11,7 @@ import 'package:final_project/widget/uplode_line.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:path/path.dart';
 class ClothesScreen extends StatefulWidget {
   @override
   _FilesScreenState createState() => _FilesScreenState();
@@ -22,6 +23,7 @@ class _FilesScreenState extends State<ClothesScreen> {
   bool spinner = false;
   String umberOfCopies,address;
   String imageUrl;
+  String fileName;
 
   Future uploadPic(BuildContext context) async {
     final _storage = FirebaseStorage.instance;
@@ -32,13 +34,13 @@ class _FilesScreenState extends State<ClothesScreen> {
     if (permissionStatus.isGranted) {
       image = await _picker.getImage(source: ImageSource.gallery);
       var file = File(image.path);
+      fileName = image.path.split('/').last;
       if (image != null) {
         setState(() {
           spinner = true;
         });
         var snapshots =
-        await _storage.ref().child('clothesImage').putFile(file);
-
+        await _storage.ref().child('clothes/$fileName').putFile(file);
         var downloadUrl = await snapshots.ref.getDownloadURL();
         setState(() {
           imageUrl = downloadUrl;
@@ -159,7 +161,8 @@ class _FilesScreenState extends State<ClothesScreen> {
                                 "numOfCopies": umberOfCopies,
                                 "address":address,
                                 'url':imageUrl,
-                                'sender':_auth.currentUser.email
+                                'sender':_auth.currentUser.email,
+                                'fileName':fileName,
                               });
                              setState(() {
                                spinner = false;

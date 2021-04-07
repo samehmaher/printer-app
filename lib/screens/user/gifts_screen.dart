@@ -33,11 +33,12 @@ class _FilesScreenState extends State<GiftsScreen> {
     if (permissionStatus.isGranted) {
       image = await _picker.getImage(source: ImageSource.gallery);
       var file = File(image.path);
+      String fileName = image.path.split('/').last;
       if (image != null) {
         setState(() {
           spinner = true;
         });
-        var snapshots = await _storage.ref().child('giftImage').putFile(file);
+        var snapshots = await _storage.ref().child('gifts/$fileName').putFile(file);
 
         var downloadUrl = await snapshots.ref.getDownloadURL();
         setState(() {
@@ -198,6 +199,7 @@ class _FilesScreenState extends State<GiftsScreen> {
               ),
             ),
           ),
-        ));
+        ),
+    );
   }
 }

@@ -3,6 +3,9 @@ import 'package:final_project/widget/reuse_card.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:ext_storage/ext_storage.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 class ClothesAdmin extends StatefulWidget {
   @override
   _ClothesAdminState createState() => _ClothesAdminState();
@@ -11,6 +14,7 @@ class ClothesAdmin extends StatefulWidget {
 class _ClothesAdminState extends State<ClothesAdmin> {
   bool spinner = false;
   var _fireStore = FirebaseFirestore.instance;
+
 
   @override
   Widget build(BuildContext context) {
@@ -49,14 +53,28 @@ class _ClothesAdminState extends State<ClothesAdmin> {
               String numOfCopies = item.data()['numOfCopies'];
               String sender = item.data()['sender'];
               String url = item.data()['url'];
+              String fileName = item.data()['fileName'];
+
 
               var itemCard = ReuseCard(
                 sender: sender,
                 address: address ,
                 numOfCopies: numOfCopies ,
                 url: url,
+                fileName: fileName,
                 chat:(){} ,
-                download: (){},
+                download: ()async{  await Permission.storage.request();
+                var permissionStatus = await Permission.storage.status;
+                if (permissionStatus.isGranted) {
+                  final externalDir = await ExtStorage.getExternalStoragePublicDirectory(ExtStorage.DIRECTORY_DOWNLOADS);
+                  await FlutterDownloader.enqueue(
+                    url: url,
+                    savedDir: externalDir,
+                    fileName: fileName,
+                    showNotification: true,
+                    openFileFromNotification: true,
+                  );
+                }},
 
               );
               cardList.add(itemCard);
